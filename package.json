@@ -1,0 +1,38 @@
+{
+  "name": "express-single-resource",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "pretest": "npm run lint",
+    "test": "mocha --recursive",
+    "start": "node server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Clairefollett/express-single-resource.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Clairefollett/express-single-resource/issues"
+  },
+  "homepage": "https://github.com/Clairefollett/express-single-resource#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "eslint": "^3.19.0",
+    "mocha": "^3.2.0",
+    "promise": "^7.1.1",
+    "superagent": "^3.5.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "mongoose": "^4.9.3",
+    "morgan": "^1.8.1"
+  }
+}
