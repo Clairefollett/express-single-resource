@@ -17,24 +17,25 @@ describe('schnoodle routes', () => {
         name: 'breezy',
         type: 'schnoodle', 
         age: 5.5
-    }
-    //making some test schnoodles
+    };
+    
     let princess = {
         name: 'princess',
         type: 'schnoodle', 
         age: 5
-    }
+    };
 
     let caesar = {
         name: 'caesar',
         type: 'chocolate lab',
         age: 10
-    }
+    };
+
     let updated = {
         name: 'fake',
         type: 'fake',
         age: 100
-    }
+    };
 
     before(() => mongoose.connection.dropDatabase());
 
@@ -42,7 +43,7 @@ describe('schnoodle routes', () => {
         return request.post('/schnoodles')
             .send(schnoodle)
             .then(res => res.body);
-    }
+    };
 
     it('posts a new schnoodle', () => {
         return saveSchnoodle(breezy)
@@ -59,7 +60,7 @@ describe('schnoodle routes', () => {
             .then(res => {
                 assert.deepEqual(res.body, breezy);
         });
-    })
+    });
 
     it('gets all schnoodles', () => {
         return Promise.all([
@@ -81,13 +82,29 @@ describe('schnoodle routes', () => {
             assert.equal(res.body[2]._id, princess._id)
         });
     });
+
     it('updates schnoodle', () => {
         breezy.name = 'max'
         return request.put(`/schnoodles/${breezy._id}`)
             .send(breezy)
             .then(res => {
                 const updatedSchnoodle = res.body;
-                assert.equal(updatedSchnoodle.name, 'max')
+                assert.equal(updatedSchnoodle.name, breezy.name)
         });
     });
-})
+
+    it('deletes schnoodle', () => {
+        return request.del(`/schnoodles/${caesar._id}`)
+            .then(res => {
+                assert.isTrue(res.body.deleted);
+            })
+            .then(() => request.get('/schnoodles'))
+            .then(res => {
+                const schnoodles = res.body
+                assert.equal(res.body[0]._id, breezy._id)
+                assert.equal(res.body[1]._id, princess._id)
+                assert.isUndefined(res.body[2])
+                //chacks to see if caesar is removed out of schnoodle array when getting all   
+            });
+    });
+});
