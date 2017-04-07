@@ -1,4 +1,5 @@
-const assert = require('assert');
+const chai = require('chai');
+const assert = chai.assert;
 const Schnoodle = require('../lib/models/schnoodles');
 
 describe('schnoodle schema', () => {
@@ -12,7 +13,17 @@ describe('schnoodle schema', () => {
     });
 
     it('requires the name', () => {
-
+        return new Schnoodle({
+            type: 'schnoodle',
+            age: 9
+        }).validate()
+        .then(
+            () => { throw new Error('validation should fail'); },
+            res => {
+                const errorMsg = 'Path `name` is required.'
+                assert.equal(res.errors.name.message, errorMsg)  
+            }
+        )
     });
 
     it('requires the type', () => {
