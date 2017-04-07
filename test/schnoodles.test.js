@@ -39,6 +39,6 @@ describe('schnoodle routes', () => {
             .then(res => {
                 res._id = breezy._id
                 assert.deepEqual(res._id, breezy._id);
-            })
-    })
+            });
+    });
 })
