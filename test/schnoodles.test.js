@@ -25,20 +25,69 @@ describe('schnoodle routes', () => {
         age: 5
     }
 
+    let caesar = {
+        name: 'caesar',
+        type: 'chocolate lab',
+        age: 10
+    }
+    let updated = {
+        name: 'fake',
+        type: 'fake',
+        age: 100
+    }
+
     before(() => mongoose.connection.dropDatabase());
 
     function saveSchnoodle(schnoodle) {
         return request.post('/schnoodles')
             .send(schnoodle)
-            .then(res => 
-            schnoodle = res.body);
+            .then(res => res.body);
     }
 
     it('posts a new schnoodle', () => {
         return saveSchnoodle(breezy)
-            .then(res => {
-                res._id = breezy._id
-                assert.deepEqual(res._id, breezy._id);
+            .then(savedSchnoodle => {
+                assert.isOk(savedSchnoodle._id)
+                breezy._id = savedSchnoodle._id;
+                breezy.__v = savedSchnoodle.__v;
+                assert.deepEqual(savedSchnoodle, breezy);
             });
+    });
+
+    it('gets schnoodle by id', () => {
+        return request.get(`/schnoodles/${breezy._id}`)
+            .then(res => {
+                assert.deepEqual(res.body, breezy);
+        });
+    })
+
+    it('gets all schnoodles', () => {
+        return Promise.all([
+            saveSchnoodle(caesar),
+            saveSchnoodle(princess)
+        ])
+        .then(savedSchnoodle => {
+            caesar = savedSchnoodle[0];
+            princess = savedSchnoodle[1];
+        })
+        .then(() => request.get('/schnoodles'))
+        .then(res => {
+            const schnoodles = res.body;
+            //we already saved breezy so he's the index 0
+            assert.equal(res.body[0]._id, breezy._id)
+            //first object in saved schnoodle array (request we sent)
+            assert.equal(res.body[1]._id, caesar._id)
+            //second object in saved schnoodle array (request we sent)
+            assert.equal(res.body[2]._id, princess._id)
+        });
+    });
+    it('updates schnoodle', () => {
+        breezy.name = 'max'
+        return request.put(`/schnoodles/${breezy._id}`)
+            .send(breezy)
+            .then(res => {
+                const updatedSchnoodle = res.body;
+                assert.equal(updatedSchnoodle.name, 'max')
+        });
     });
 })
